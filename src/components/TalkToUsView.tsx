@@ -10,6 +10,7 @@ declare global {
       }) => void;
     };
     disqus_config?: (this: any) => void;
+    disqus_shortname?: string;
   }
 }
 
@@ -17,20 +18,19 @@ export const TalkToUsView: React.FC = () => {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    // Real fixed configuration values for Disqus (replacing placeholders)
-    const PAGE_IDENTIFIER = 'katana-guild-talk-to-us';
-    const PAGE_URL =
-      typeof window !== 'undefined' && window.location.origin && window.location.origin !== 'null'
-        ? `${window.location.origin}/talk-to-us`
-        : 'https://katana-sword-smu.disqus.com/talk-to-us';
+    // Real fixed configuration values for Disqus (as requested)
+    const PAGE_IDENTIFIER = 'talk-to-us';
+    const PAGE_URL = 'https://katana-sword-smu.disqus.com/talk-to-us';
 
     const configureDisqus = function (this: any) {
+      this.page = this.page || {};
       this.page.url = PAGE_URL;
       this.page.identifier = PAGE_IDENTIFIER;
       this.page.title = 'Talk to Us - Caesars Nihonto Guild';
     };
 
-    // Assign global disqus_config
+    // Ensure global disqus variables
+    window.disqus_shortname = 'katana-sword-smu';
     window.disqus_config = configureDisqus;
 
     // In a single-page application (SPA), reload Disqus properly when switching tabs
