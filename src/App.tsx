@@ -18,7 +18,7 @@ import { Sword, CartItem, FilterCategory } from './types';
 
 export default function App() {
   // Navigation & Category state
-  const [currentCategory, setCurrentCategory] = useState<FilterCategory>('all');
+  const [currentCategory, setCurrentCategory] = useState<FilterCategory>('katana');
 
   // Filter & Search states matching reference screenshot
   const [searchQuery, setSearchQuery] = useState('');

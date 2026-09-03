@@ -7,6 +7,11 @@ import yoenImg from '../assets/images/yoen_katana_stand_1788422589660.jpg';
 import inkoImg from '../assets/images/inko_katana_stand_1788422603297.jpg';
 import fukamiImg from '../assets/images/fukami_katana_stand_1788422617777.jpg';
 import autumnLeafImg from '../assets/images/autumn_leaf_katana_1788422634880.jpg';
+import ca104Img from '../assets/images/ca104_mizuchi_sword_1788423276656.jpg';
+import ca101Img from '../assets/images/ca101_kiyo_sword_1788423294215.jpg';
+import ca105Img from '../assets/images/ca105_aki_sword_1788423310172.jpg';
+import ca103Img from '../assets/images/ca103_fudo_sword_1788423324225.jpg';
+import ca102Img from '../assets/images/ca102_seiryu_sword_1788423340929.jpg';
 
 export const SWORDS_DATABASE: Sword[] = [
   // Exact 16 Katana blades in order as shown in reference catalog
@@ -54,14 +59,13 @@ export const SWORDS_DATABASE: Sword[] = [
     price: 278.0,
     loyaltyPoints: 14,
     badge: {
-      text: 'Dragon Tsuba Inset',
-      position: 'bottom-right',
-      variant: 'inset',
+      text: 'Water Dragon',
+      position: 'top-left',
+      variant: 'gold',
     },
     status: '+14 loyalty pts',
     statusType: 'loyalty',
-    imageUrl:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuCDNZF6v7OqaIlPm_jzBmWy0kwmTY3S9w9-u-5JihbIfZEIgDT7YIedkhSA5mBYnwoucRSoJG6voKisuXkTIQqBg4MPlw-TPaS3j1DRnD_LVHt-bfv8OIIRGciuGr6iFDrBaalGdnrkjVryQbfsFJl1oti8FngaKMvMLKZ4v0mOEQ8rI9hij55ihf7ngXJgEutF32_mDsHgiotIpf3WkzY-0W1zRBv1WtkGfKVsM0jsFpV6kSOpbT121hHNPa74G4gCyOE',
+    imageUrl: ca104Img,
     category: 'katana',
     steel: '1060 Folded Spring Carbon Steel',
     nagasa: '73 cm (2.41 shaku)',
@@ -95,8 +99,7 @@ export const SWORDS_DATABASE: Sword[] = [
     },
     status: 'Available to Ship',
     statusType: 'stock',
-    imageUrl:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuDiV4pWHtcNzKnxQV3Ns0VVevn-Tf59XsmB_NEiX_vSpgzU8x8dMtswkYj0Bk2ev7iHsWNxUpj_F5phmtlwGZWWTHMsKUlhZen1a2ib43bMFDz6oaNhMpt_EI-PH0ChHc1F4DFZqXMkkXrPPIGwg_5tp1RHrD0BW6BEv3NraZ89Wpvn_u6WFtFmiqpUTu-CC31Zp32k1HZZWyoD2aclWs6HCd5UaavVRsQHwR1SBceuhvBiWOmMz1fwpexCi_y1n7-aLPg',
+    imageUrl: ca101Img,
     category: 'katana',
     steel: '1095 Differentially Clay Tempered',
     nagasa: '72 cm (2.37 shaku)',
@@ -166,8 +169,7 @@ export const SWORDS_DATABASE: Sword[] = [
     },
     status: '+14 loyalty pts',
     statusType: 'loyalty',
-    imageUrl:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuD5cH_8veQyKSKsNuqOtUwhFNzOel3lQcr-dZ6QigfBjtWpRRwSLOJDKG2z59HyxolZY2T3szjL1o80ZvC138a6afgww3qB4TRI32TY9Bgn1hDIIHMU2yVkv50z3i4bN1hNK4qlwZzqGypoxbn_iPiZZgVl5joZyA-UB-6Q2JQOIonXmDGS7eSgGP1fjKmLGdvKTdLwbwd2QSdRCVdTQw_MDZ_v-ql6mTbo_PdntyltaTSlAGjPgA_dPTueS_NV77F2jFo',
+    imageUrl: ca105Img,
     category: 'katana',
     steel: '1060 Folded High Carbon',
     nagasa: '72 cm (2.37 shaku)',
@@ -196,8 +198,7 @@ export const SWORDS_DATABASE: Sword[] = [
     price: 278.0,
     status: 'In Stock',
     statusType: 'stock',
-    imageUrl:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuBJMNv1G3DCsa1cv6OXW11jW2AC3rUq_vEn_VXrXk0ARoSMj7ACqCA2N3CsUFDOkjVMG4UmopqS7JYaSgEpXUTxOqd5ZeKVj3-_8AKDTKwRT0GLVMVuQiwusZNrvTRV5eEPEvc3-WBLXKabO0wHAMqGsXsgYtdLPAtAHcjH3_4ns04ZepB5tw0iLelpviIs3JpPOpeFgBW1JeH2d7cQWzoyDVAnBVnB45vz0Bus04QVtDk5jZwXUfWHIxmujOuWaxW_Mog',
+    imageUrl: ca103Img,
     category: 'katana',
     steel: '1095 Clay-Tempered Carbon Steel',
     nagasa: '72.5 cm (2.39 shaku)',
@@ -232,8 +233,7 @@ export const SWORDS_DATABASE: Sword[] = [
     },
     status: '+14 loyalty pts',
     statusType: 'loyalty',
-    imageUrl:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuBEQ105ZMQufCNkbCXw22AVC8UGo3yBhPitej_zAcN9QnMCu0J3k5J-JttgzsvinO4meRteebSrMEU2oE9zX_sDBSf7awszoXBSHhjNm3P5Ay6iazNmfDVA2hDwRQx7GDpmJxQqMn6ZdwkJSnRTBsEyi3nRaQLjPxueBPTpWbZvMxT4kRjjkfPVQsSGlscpLt_MrcrwMVyx-4C2QqvXuPrejg0GjgGFUeG30Zoio9xyXo0sHnjJazoa0Skg1tZX8jUxtvM',
+    imageUrl: ca102Img,
     category: 'katana',
     steel: '1095 High Carbon Spring Steel',
     nagasa: '72 cm',

@@ -11,24 +11,27 @@ const CATEGORY_INFO: Record<
   { title: string; subtitle: React.ReactNode; breadcrumb: string }
 > = {
   all: {
-    title: 'Nihonto Gallery',
+    title: 'Katana',
     subtitle: (
       <>
-        Authentic Japanese master swords forged in strict compliance with the Society for the
-        Preservation of Japanese Art Swords (NBTHK) standards.
+        A compound of kata (öne-sided) + na (&ldquo;blade&rdquo;).
+        <br className="hidden sm:inline" />
+        {' '}Used by the samurai in feudal Japan and worn with the edge faced upwards. The exact term
+        for it in Japan is uchigatana (打刀). It is defined as the standard sized Japanese sword with
+        blade length of more than 60cm.
       </>
     ),
-    breadcrumb: 'All Blades',
+    breadcrumb: 'Katana',
   },
   katana: {
     title: 'Katana',
     subtitle: (
       <>
-        A compound of <em>kata</em> (“one-sided”) + <em>na</em> (“blade”).
+        A compound of kata (öne-sided) + na (&ldquo;blade&rdquo;).
         <br className="hidden sm:inline" />
         {' '}Used by the samurai in feudal Japan and worn with the edge faced upwards. The exact term
-        for it in Japan is <em>uchigatana</em> (打刀). It is defined as the standard sized Japanese
-        sword with blade length of more than 60cm.
+        for it in Japan is uchigatana (打刀). It is defined as the standard sized Japanese sword with
+        blade length of more than 60cm.
       </>
     ),
     breadcrumb: 'Katana',
