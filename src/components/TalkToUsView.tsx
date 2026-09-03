@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   MessageSquare,
   ShieldCheck,
@@ -7,56 +7,123 @@ import {
   HelpCircle,
   Sparkles,
   ExternalLink,
-  RefreshCw,
-  Info,
+  RotateCw,
+  AlertTriangle,
+  Users,
   CheckCircle2,
 } from 'lucide-react';
-import { DisqusComment } from './DisqusComment';
 
 export const TalkToUsView: React.FC = () => {
-  const [reloadKey, setReloadKey] = useState(0);
-  const [isReloading, setIsReloading] = useState(false);
-  const [hasAdblockWarning, setHasAdblockWarning] = useState(false);
-  const checkMountTimerRef = useRef<number | null>(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [loadError, setLoadError] = useState(false);
+  const [forumShortname, setForumShortname] = useState<'leon-kwang' | 'katana-sword-smu'>('leon-kwang');
 
-  // Derive canonical page URL and unique forum identifier
-  const getPageUrl = useCallback(() => {
-    if (typeof window !== 'undefined' && window.location) {
-      try {
-        const origin = window.location.origin;
-        if (origin && origin !== 'null') {
-          return `${origin}/talk-to-us`;
-        }
-      } catch {
-        // fallback
+  const threadIdentifier = 'katana-guild-talk-to-us-thread';
+
+  const threadUrl = useCallback(() => {
+    try {
+      if (typeof window !== 'undefined' && window.location.origin && window.location.origin !== 'null') {
+        return `${window.location.origin}/talk-to-us`;
       }
-    }
-    return 'https://katana-sword-smu.disqus.com/talk-to-us';
-  }, []);
+    } catch {}
+    return 'https://caesars-nihonto.jp/talk-to-us';
+  }, [])();
 
+  const loadDisqus = useCallback(() => {
+    setLoadError(false);
+
+    const config = function (this: any) {
+      const page = this && typeof this === 'object' ? this : {};
+      page.page = page.page || {};
+      page.page.url = threadUrl;
+      page.page.identifier = threadIdentifier;
+      page.page.title = 'Talk to Us - Caesars Nihonto Guild';
+    };
+
+    // Global pre-config
+    if (typeof window !== 'undefined') {
+      window.disqus_shortname = forumShortname;
+      window.disqus_identifier = threadIdentifier;
+      window.disqus_url = threadUrl;
+      window.disqus_title = 'Talk to Us - Caesars Nihonto Guild';
+      window.disqus_config = config;
+    }
+
+    try {
+      if (window.DISQUS && typeof window.DISQUS.reset === 'function') {
+        window.DISQUS.reset({
+          reload: true,
+          config: config,
+        });
+        setIsLoaded(true);
+      } else {
+        let script = document.getElementById('disqus-embed-script') as HTMLScriptElement | null;
+        if (!script) {
+          script = document.createElement('script');
+          script.id = 'disqus-embed-script';
+          script.src = `https://${forumShortname}.disqus.com/embed.js`;
+          script.setAttribute('data-timestamp', String(+new Date()));
+          script.async = true;
+          script.onload = () => setIsLoaded(true);
+          script.onerror = () => {
+            setLoadError(true);
+            setIsLoaded(true);
+          };
+          (document.head || document.body).appendChild(script);
+        } else {
+          // If script tag exists but forum changed or needs reload
+          if (script.src.indexOf(forumShortname) === -1) {
+            script.remove();
+            const newScript = document.createElement('script');
+            newScript.id = 'disqus-embed-script';
+            newScript.src = `https://${forumShortname}.disqus.com/embed.js`;
+            newScript.setAttribute('data-timestamp', String(+new Date()));
+            newScript.async = true;
+            newScript.onload = () => setIsLoaded(true);
+            newScript.onerror = () => {
+              setLoadError(true);
+              setIsLoaded(true);
+            };
+            (document.head || document.body).appendChild(newScript);
+          } else {
+            const timer = setTimeout(() => {
+              if (window.DISQUS && typeof window.DISQUS.reset === 'function') {
+                window.DISQUS.reset({
+                  reload: true,
+                  config: config,
+                });
+                setIsLoaded(true);
+              }
+            }, 300);
+            return () => clearTimeout(timer);
+          }
+        }
+      }
+    } catch (err) {
+      console.warn('Disqus initialization note:', err);
+      setLoadError(true);
+    }
+  }, [forumShortname, threadIdentifier, threadUrl]);
+
+  // Staggered initialization modeled after job-board-one-rosy (50ms)
   useEffect(() => {
-    // Watchdog check: If after 5 seconds the thread has no iframe, warn about adblockers
-    checkMountTimerRef.current = window.setTimeout(() => {
+    const timer = setTimeout(() => {
+      loadDisqus();
+    }, 50);
+
+    // Watchdog check for adblockers / privacy extensions
+    const watchdogTimer = setTimeout(() => {
       const container = document.getElementById('disqus_thread');
       if (container && !container.querySelector('iframe')) {
-        setHasAdblockWarning(true);
+        setLoadError(true);
       }
-    }, 5500);
+    }, 5000);
 
     return () => {
-      if (checkMountTimerRef.current) {
-        window.clearTimeout(checkMountTimerRef.current);
-      }
+      clearTimeout(timer);
+      clearTimeout(watchdogTimer);
     };
-  }, [reloadKey]);
-
-  const handleManualReload = () => {
-    setIsReloading(true);
-    setReloadKey((prev) => prev + 1);
-    setTimeout(() => {
-      setIsReloading(false);
-    }, 600);
-  };
+  }, [loadDisqus]);
 
   const handleOpenInNewTab = () => {
     if (typeof window !== 'undefined') {
@@ -65,161 +132,165 @@ export const TalkToUsView: React.FC = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in duration-300">
-      {/* Informational Hero Card */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6 sm:p-8 shadow-xs">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-gray-100">
-          <div>
-            <div className="inline-flex items-center gap-2 px-2.5 py-1 bg-amber-50 text-amber-900 border border-amber-200/80 rounded-full text-xs font-medium mb-3">
-              <MessageSquare className="w-3.5 h-3.5 text-amber-700" />
-              Community &amp; Guild Inquiries
+    <main className="min-h-[calc(100vh-4rem)] bg-[#F8FAFC] py-8 px-4 sm:px-6 lg:px-8 animate-in fade-in duration-300">
+      <div className="max-w-5xl mx-auto space-y-6">
+        {/* Hero Section Card modeled after job-board-one-rosy */}
+        <section className="bg-white rounded-2xl p-6 sm:p-8 border border-[#E2E8F0] shadow-xs">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="space-y-3">
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#EFF6FF] text-[#1E40AF] rounded-full text-xs font-bold tracking-wide">
+                <MessageSquare className="w-3.5 h-3.5 text-[#2557a7]" />
+                <span>Community &amp; Guild Feedback Hub</span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-[#0F172A] tracking-tight">Talk to Us</h1>
+              <p className="text-sm text-[#475569] max-w-2xl leading-relaxed">
+                Have questions regarding blade provenance, custom forging commissions, or guild catalog listings? Leave a comment,
+                ask our Nihonto curators a question, or share your feedback with the guild community.
+              </p>
             </div>
-            <h2 className="text-2xl font-cinzel font-bold text-gray-900 tracking-tight">
-              Guild Concierge &amp; Collector Discussions
-            </h2>
-            <p className="text-sm text-gray-600 mt-2 max-w-2xl leading-relaxed">
-              Connect directly with master swordsmiths, certified polishers (togishi), and international
-              Nihonto collectors. Ask questions regarding sword history, custom forging, or leave your
-              feedback below.
-            </p>
-          </div>
 
-          <div className="flex flex-col sm:flex-row md:flex-col gap-3 min-w-[220px]">
-            <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-md border border-gray-100 text-xs">
-              <Clock className="w-4 h-4 text-[#C5A059] shrink-0" />
-              <div>
-                <p className="font-semibold text-gray-800">Response Window</p>
-                <p className="text-gray-500 text-[11px]">Within 24 business hours</p>
+            <div className="flex flex-row md:flex-col gap-3 min-w-[200px] border-t md:border-t-0 md:border-l border-[#E2E8F0] pt-4 md:pt-0 md:pl-6">
+              <div className="flex items-center gap-2 text-xs text-[#334155]">
+                <Clock className="w-4 h-4 text-[#0F766E] shrink-0" />
+                <span>
+                  Avg response time: <strong>&lt; 2 hrs</strong>
+                </span>
+              </div>
+              <div className="flex items-center gap-2 text-xs text-[#334155]">
+                <ShieldCheck className="w-4 h-4 text-[#003f8b] shrink-0" />
+                <span>Verified Nihonto Curators</span>
+              </div>
+              <div className="flex items-center gap-2 text-xs text-[#334155]">
+                <Users className="w-4 h-4 text-[#2557a7] shrink-0" />
+                <span>Open Collector Forum</span>
               </div>
             </div>
-            <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-md border border-gray-100 text-xs">
-              <ShieldCheck className="w-4 h-4 text-[#C5A059] shrink-0" />
-              <div>
-                <p className="font-semibold text-gray-800">Verified Advice</p>
-                <p className="text-gray-500 text-[11px]">NBTHK standards compliant</p>
+          </div>
+
+          {/* Quick Guidance Feature Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-6 pt-6 border-t border-[#F1F5F9]">
+            <div className="p-3.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0]">
+              <div className="flex items-center gap-2 mb-1">
+                <ShieldCheck className="w-4 h-4 text-[#2557a7]" />
+                <span className="text-xs font-bold text-[#1E293B]">Blade Authentication</span>
               </div>
+              <p className="text-[12px] text-[#64748B]">
+                Inquire about NBTHK papers (Hozon, Tokubetsu Hozon, Juyo), mei smith signatures, and historic era attributions.
+              </p>
             </div>
-          </div>
-        </div>
 
-        {/* Quick Topic Guidelines */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 text-xs text-gray-600">
-          <div className="flex items-start gap-2.5">
-            <Sparkles className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-            <div>
-              <span className="font-medium text-gray-800 block mb-0.5">Custom Commissions</span>
-              <span>Guidance on steel selection (Tamahagane, 1095, T10) and sori curves.</span>
+            <div className="p-3.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0]">
+              <div className="flex items-center gap-2 mb-1">
+                <Sparkles className="w-4 h-4 text-[#0F766E]" />
+                <span className="text-xs font-bold text-[#1E293B]">Custom Forging Orders</span>
+              </div>
+              <p className="text-[12px] text-[#64748B]">
+                Ask about genuine tamahagane steel smelting, clay-tempered hamon lines, and bespoke koshirae fittings.
+              </p>
             </div>
-          </div>
-          <div className="flex items-start gap-2.5">
-            <ShieldCheck className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-            <div>
-              <span className="font-medium text-gray-800 block mb-0.5">Provenance &amp; Papers</span>
-              <span>Identification of mei signatures, smith schools, and Edo era fittings.</span>
-            </div>
-          </div>
-          <div className="flex items-start gap-2.5">
-            <HelpCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-            <div>
-              <span className="font-medium text-gray-800 block mb-0.5">Maintenance &amp; Care</span>
-              <span>Uchiko powder cleaning, choji clove oiling, and tsuka-ito re-wrapping.</span>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      {/* Disqus Embed Container */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6 sm:p-8 shadow-xs">
-        <div className="border-b border-gray-100 pb-4 mb-6 flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h3 className="text-base font-semibold text-gray-900 flex items-center gap-2">
-              <MessageSquare className="w-4 h-4 text-[#C5A059]" />
-              Public Discussion Forum
-            </h3>
-            <span className="text-xs text-gray-400">Forum Shortname: katana-sword-smu</span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <button
-              onClick={handleManualReload}
-              disabled={isReloading}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded transition-colors cursor-pointer disabled:opacity-50"
-              title="Reload discussion thread"
-            >
-              <RefreshCw className={`w-3.5 h-3.5 ${isReloading ? 'animate-spin text-[#C5A059]' : ''}`} />
-              <span>Reload Thread</span>
-            </button>
-            <button
-              onClick={handleOpenInNewTab}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-amber-800 hover:text-amber-900 bg-amber-50 hover:bg-amber-100 border border-amber-200/80 rounded transition-colors cursor-pointer"
-              title="Open full page in standalone tab to prevent third-party cookie blocks"
-            >
-              <ExternalLink className="w-3.5 h-3.5" />
-              <span>Open in New Tab</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Commenting Instructions & Guidelines Card */}
-        <div className="mb-6 p-4 bg-slate-50 border border-slate-200 rounded-md text-xs text-slate-700 space-y-2">
-          <div className="flex items-center gap-2 font-medium text-slate-900">
-            <Info className="w-4 h-4 text-[#C5A059] shrink-0" />
-            <span>How to post your comment or inquiry:</span>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pl-6 text-[12px] leading-relaxed text-slate-600">
-            <div className="flex items-start gap-1.5">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
-              <span>
-                <strong className="text-slate-800 font-semibold">Post as a Guest:</strong> You do not need an account. Type your comment, click the Name field below, and check <em>&quot;I&apos;d rather post as a guest&quot;</em>.
-              </span>
-            </div>
-            <div className="flex items-start gap-1.5">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
-              <span>
-                <strong className="text-slate-800 font-semibold">Social / Disqus Login:</strong> Sign in with your Disqus profile, Google, or social accounts to track replies.
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Adblock Warning (if detected) */}
-        {hasAdblockWarning && (
-          <div className="mb-6 p-4 bg-amber-50/80 border border-amber-200 rounded-md text-xs text-amber-900 flex items-start gap-3">
-            <HelpCircle className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
-            <div className="space-y-1">
-              <p className="font-semibold text-amber-900">Cannot see the comments box?</p>
-              <p className="text-amber-800 leading-relaxed">
-                Ad blockers, Brave Shields, or strict privacy extensions often block third-party Disqus widgets. If the comment box does not load, try temporarily pausing your ad blocker for this site or clicking <strong>&quot;Open in New Tab&quot;</strong> above.
+            <div className="p-3.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0]">
+              <div className="flex items-center gap-2 mb-1">
+                <HelpCircle className="w-4 h-4 text-[#EA580C]" />
+                <span className="text-xs font-bold text-[#1E293B]">Maintenance &amp; Logistics</span>
+              </div>
+              <p className="text-[12px] text-[#64748B]">
+                Questions regarding international insured shipping, Torokusho export licensing, and traditional uchiko care.
               </p>
             </div>
           </div>
-        )}
+        </section>
 
-        {/* Robust DisqusComment Component */}
-        <DisqusComment
-          key={reloadKey}
-          shortname="katana-sword-smu"
-          identifier="talk-to-us"
-          url={getPageUrl()}
-          title="Talk to Us & Guild Discussion - Caesars Nihonto Guild"
-          className="min-h-[380px] w-full"
-        />
+        {/* Discussion Section Card modeled after job-board-one-rosy */}
+        <section className="bg-white rounded-2xl p-6 sm:p-8 border border-[#E2E8F0] shadow-xs">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 mb-5 border-b border-[#E2E8F0]">
+            <div>
+              <h2 className="text-base font-bold text-[#0F172A] flex items-center gap-2">
+                <span>Join the Discussion</span>
+                <span className="text-xs px-2 py-0.5 rounded-full bg-[#F1F5F9] text-[#475569] font-medium">
+                  Disqus Community
+                </span>
+              </h2>
+              <div className="flex items-center gap-2 mt-1 text-xs text-[#64748B]">
+                <span>Posting to thread:</span>
+                <code className="bg-[#F1F5F9] px-1.5 py-0.5 rounded text-[11px] text-[#334155] font-mono">
+                  {threadIdentifier}
+                </code>
+                <span className="text-gray-300">|</span>
+                <span className="text-[11px] text-gray-500">Forum:</span>
+                <button
+                  type="button"
+                  onClick={() => setForumShortname(prev => prev === 'leon-kwang' ? 'katana-sword-smu' : 'leon-kwang')}
+                  className="font-mono text-[11px] text-[#003f8b] hover:underline font-medium cursor-pointer"
+                  title="Click to toggle forum shortname"
+                >
+                  {forumShortname}
+                </button>
+              </div>
+            </div>
 
-        {/* Direct Concierge Contact Footer */}
-        <div className="mt-8 pt-6 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-500">
-          <div className="flex items-center gap-2">
-            <Mail className="w-4 h-4 text-gray-400" />
-            <span>Prefer a private appraisal or confidential commission?</span>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={loadDisqus}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-[#334155] hover:bg-[#F1F5F9] border border-[#CBD5E1] transition-colors cursor-pointer"
+                title="Refresh discussion thread"
+                id="reload-disqus-btn"
+              >
+                <RotateCw className="w-3.5 h-3.5 text-[#64748B]" />
+                <span>Reload Thread</span>
+              </button>
+              <button
+                onClick={handleOpenInNewTab}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-[#1E40AF] hover:bg-[#EFF6FF] border border-[#BFDBFE] transition-colors cursor-pointer"
+                title="Open thread in standalone tab"
+              >
+                <ExternalLink className="w-3.5 h-3.5 text-[#1E40AF]" />
+                <span>Open in Tab</span>
+              </button>
+            </div>
           </div>
-          <a
-            href="mailto:concierge@caesars-nihonto.jp?subject=Private%20Nihonto%20Inquiry"
-            className="text-[#C5A059] font-medium hover:underline inline-flex items-center gap-1"
-          >
-            Email Guild Concierge &rarr;
-          </a>
-        </div>
+
+          {/* Error / Timeout banner modeled after job-board-one-rosy */}
+          {loadError && (
+            <div className="mb-4 p-4 rounded-xl bg-[#FFFBEB] border border-[#FDE68A] text-xs text-[#92400E] flex items-start gap-2">
+              <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5 text-[#B45309]" />
+              <div>
+                <p className="font-semibold">Disqus took longer to respond or was blocked by browser privacy settings.</p>
+                <p className="mt-1 text-[#A16207]">
+                  If comments do not appear below, check if your browser or ad blocker is restricting third-party scripts, or click
+                  &quot;Reload Thread&quot; above.
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* The Disqus Thread Mount */}
+          <div id="disqus_thread" className="min-h-[280px] w-full" />
+
+          <noscript>
+            Please enable JavaScript to view the{' '}
+            <a href="https://disqus.com/?ref_noscript" rel="noreferrer" className="text-[#003f8b] underline">
+              comments powered by Disqus.
+            </a>
+          </noscript>
+
+          {/* Direct Concierge Contact Footer */}
+          <div className="mt-8 pt-6 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-500">
+            <div className="flex items-center gap-2">
+              <Mail className="w-4 h-4 text-gray-400" />
+              <span>Prefer a private appraisal or confidential commission?</span>
+            </div>
+            <a
+              href="mailto:concierge@caesars-nihonto.jp?subject=Private%20Nihonto%20Inquiry"
+              className="text-[#003f8b] font-medium hover:underline inline-flex items-center gap-1"
+            >
+              Email Guild Concierge &rarr;
+            </a>
+          </div>
+        </section>
       </div>
-    </div>
+    </main>
   );
 };
+
 

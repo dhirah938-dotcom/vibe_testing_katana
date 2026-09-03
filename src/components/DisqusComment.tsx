@@ -19,17 +19,17 @@ declare global {
 
 export interface DisqusCommentProps {
   /**
-   * The shortname of the Disqus forum (e.g. 'katana-sword-smu')
+   * The shortname of the Disqus forum (e.g. 'leon-kwang' or 'katana-sword-smu')
    */
-  shortname: string;
+  shortname?: string;
   /**
-   * Unique identifier for the page or thread (e.g. 'talk-to-us' or post ID)
+   * Unique identifier for the page or thread
    */
-  identifier: string;
+  identifier?: string;
   /**
-   * Canonical URL of the page (e.g. 'https://example.com/talk-to-us')
+   * Canonical URL of the page
    */
-  url: string;
+  url?: string;
   /**
    * Optional title of the page/thread
    */
@@ -51,26 +51,25 @@ export interface DisqusCommentProps {
    */
   onLoaded?: () => void;
   /**
-   * Optional callback on script error
+   * Optional callback on script error or timeout
    */
-  onError?: (error: Error | Event) => void;
+  onError?: (error: Error | Event | null) => void;
 }
 
 /**
- * Robust DisqusComment component for Next.js and React SPAs:
- * 1. Accepts shortname, identifier, and url as props
- * 2. Dynamically injects the embed script only after <div id="disqus_thread"> is mounted
- * 3. Handles React 18+ / StrictMode double-mounting with a cleanup calling DISQUS.reset() and removing listeners
- * 4. Uses DISQUS.reset({ reload: true }) on route / prop changes for client-side navigation
- * 5. Sets window.disqus_identifier and window.disqus_url before loading embed.js
+ * Robust DisqusComment component modeled after https://job-board-one-rosy.vercel.app/:
+ * - Uses dynamic script injection with 'disqus-embed-script' ID
+ * - Handles window.DISQUS.reset({ reload: true, config })
+ * - Synchronizes window.disqus_config before script loading
+ * - Manages script error and timeout fallbacks
  */
 export const DisqusComment: React.FC<DisqusCommentProps> = ({
-  shortname,
-  identifier,
+  shortname = 'leon-kwang',
+  identifier = 'katana-guild-talk-to-us-thread',
   url,
-  title,
+  title = 'Talk to Us - Caesars Nihonto Guild',
   categoryId,
-  className = 'min-h-[380px] w-full',
+  className = 'min-h-[280px] w-full',
   containerId = 'disqus_thread',
   onLoaded,
   onError,
@@ -78,179 +77,120 @@ export const DisqusComment: React.FC<DisqusCommentProps> = ({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [isScriptLoaded, setIsScriptLoaded] = useState(false);
 
+  const pageUrl = url || (() => {
+    try {
+      if (typeof window !== 'undefined' && window.location.origin && window.location.origin !== 'null') {
+        return `${window.location.origin}/talk-to-us`;
+      }
+    } catch {}
+    return 'https://caesars-nihonto.jp/talk-to-us';
+  })();
+
   useEffect(() => {
-    // Only execute in client browser environments (safe for Next.js SSR)
     if (typeof window === 'undefined') {
       return;
     }
 
-    // (2) Ensure the container element is mounted in the DOM before proceeding
     const container = document.getElementById(containerId);
     if (!container) {
       console.warn(`[DisqusComment] Container #${containerId} not found in DOM.`);
       return;
     }
 
-    // (5) Set window.disqus_identifier, window.disqus_url, and global disqus_config BEFORE loading embed.js
+    // Set globals prior to loading or resetting
     window.disqus_shortname = shortname;
     window.disqus_identifier = identifier;
-    window.disqus_url = url;
-    if (title) {
-      window.disqus_title = title;
-    }
-    if (categoryId) {
-      window.disqus_category_id = categoryId;
-    }
+    window.disqus_url = pageUrl;
+    if (title) window.disqus_title = title;
+    if (categoryId) window.disqus_category_id = categoryId;
 
     const configureDisqus = function (this: any) {
       const page = this && typeof this === 'object' ? this : {};
       page.page = page.page || {};
       page.page.identifier = identifier;
-      page.page.url = url;
-      if (title) {
-        page.page.title = title;
-      }
-      if (categoryId) {
-        page.page.category_id = categoryId;
-      }
+      page.page.url = pageUrl;
+      if (title) page.page.title = title;
+      if (categoryId) page.page.category_id = categoryId;
     };
 
     window.disqus_config = configureDisqus;
 
-    let scriptElement: HTMLScriptElement | null = null;
-    let handleScriptLoad: (() => void) | null = null;
-    let handleScriptError: ((e: Event) => void) | null = null;
-    let pollTimer: number | null = null;
+    let timer: NodeJS.Timeout | null = null;
+    let initialTimer: NodeJS.Timeout | null = null;
 
-    // (4) If DISQUS already exists on window (e.g. client-side navigation / route change), reset it
-    if (window.DISQUS && typeof window.DISQUS.reset === 'function') {
+    const loadDisqus = () => {
       try {
-        window.DISQUS.reset({
-          reload: true,
-          config: configureDisqus,
-        });
-        setIsScriptLoaded(true);
-        onLoaded?.();
-      } catch (err) {
-        console.warn('[DisqusComment] DISQUS.reset failed:', err);
-      }
-    } else {
-      // (2) Dynamically inject embed.js if not already present
-      const scriptId = `dsq-embed-${shortname}`;
-      const existingScript = document.getElementById(scriptId) as HTMLScriptElement | null;
-
-      if (!existingScript) {
-        const s = document.createElement('script');
-        s.id = scriptId;
-        s.src = `https://${shortname}.disqus.com/embed.js`;
-        s.setAttribute('data-timestamp', String(+new Date()));
-        s.async = true;
-
-        handleScriptLoad = () => {
-          setIsScriptLoaded(true);
-          onLoaded?.();
-        };
-
-        handleScriptError = (e: Event) => {
-          console.error('[DisqusComment] Failed to load Disqus embed script:', e);
-          onError?.(e);
-        };
-
-        s.addEventListener('load', handleScriptLoad);
-        s.addEventListener('error', handleScriptError);
-
-        scriptElement = s;
-        (document.head || document.body).appendChild(s);
-      } else {
-        // Script already exists in DOM but DISQUS might still be initializing
-        scriptElement = existingScript;
-
-        handleScriptLoad = () => {
-          if (window.DISQUS && typeof window.DISQUS.reset === 'function') {
-            try {
-              window.DISQUS.reset({
-                reload: true,
-                config: configureDisqus,
-              });
-            } catch (err) {
-              console.warn('[DisqusComment] Reset on load failed:', err);
-            }
-          }
-          setIsScriptLoaded(true);
-          onLoaded?.();
-        };
-
-        existingScript.addEventListener('load', handleScriptLoad, { once: true });
-
-        // Poll fallback in case load event was already fired
-        let attempts = 0;
-        pollTimer = window.setInterval(() => {
-          attempts++;
-          if (window.DISQUS && typeof window.DISQUS.reset === 'function') {
-            if (pollTimer) window.clearInterval(pollTimer);
-            pollTimer = null;
-            try {
-              window.DISQUS.reset({
-                reload: true,
-                config: configureDisqus,
-              });
-            } catch (err) {
-              console.warn('[DisqusComment] Reset after polling failed:', err);
-            }
-            setIsScriptLoaded(true);
-            onLoaded?.();
-          } else if (attempts > 25) {
-            if (pollTimer) window.clearInterval(pollTimer);
-            pollTimer = null;
-          }
-        }, 120);
-      }
-    }
-
-    // (3) Cleanup for React 18 StrictMode double-mounting and unmounting
-    return () => {
-      // Clear any pending poll interval
-      if (pollTimer) {
-        window.clearInterval(pollTimer);
-        pollTimer = null;
-      }
-
-      // Remove event listeners
-      if (scriptElement && handleScriptLoad) {
-        scriptElement.removeEventListener('load', handleScriptLoad);
-      }
-      if (scriptElement && handleScriptError) {
-        scriptElement.removeEventListener('error', handleScriptError);
-      }
-
-      // Reset DISQUS instance if active to prevent state leakage or duplicate threads
-      if (window.DISQUS && typeof window.DISQUS.reset === 'function') {
-        try {
+        if (window.DISQUS && typeof window.DISQUS.reset === 'function') {
           window.DISQUS.reset({
-            reload: false,
-            config: function (this: any) {
-              this.page = this.page || {};
-            },
+            reload: true,
+            config: configureDisqus,
           });
-        } catch {
-          // Silent catch on unmount cleanup
+          setIsScriptLoaded(true);
+          onLoaded?.();
+        } else {
+          window.disqus_config = configureDisqus;
+          let script = document.getElementById('disqus-embed-script') as HTMLScriptElement | null;
+          
+          if (!script) {
+            script = document.createElement('script');
+            script.id = 'disqus-embed-script';
+            script.src = `https://${shortname}.disqus.com/embed.js`;
+            script.setAttribute('data-timestamp', String(+new Date()));
+            script.async = true;
+            
+            script.onload = () => {
+              setIsScriptLoaded(true);
+              onLoaded?.();
+            };
+            
+            script.onerror = (e) => {
+              console.warn('[DisqusComment] Failed to load Disqus script:', e);
+              onError?.(e);
+              setIsScriptLoaded(true);
+            };
+            
+            (document.head || document.body).appendChild(script);
+          } else {
+            // Script tag already exists, wait for window.DISQUS to be available
+            timer = setTimeout(() => {
+              if (window.DISQUS && typeof window.DISQUS.reset === 'function') {
+                window.DISQUS.reset({
+                  reload: true,
+                  config: configureDisqus,
+                });
+                setIsScriptLoaded(true);
+                onLoaded?.();
+              }
+            }, 300);
+          }
         }
+      } catch (err: any) {
+        console.warn('[DisqusComment] Disqus initialization note:', err);
+        onError?.(err);
       }
     };
-  }, [shortname, identifier, url, title, categoryId, containerId, onLoaded, onError]);
+
+    // Staggered initialization matching job-board-one-rosy (50ms)
+    initialTimer = setTimeout(() => {
+      loadDisqus();
+    }, 50);
+
+    return () => {
+      if (initialTimer) clearTimeout(initialTimer);
+      if (timer) clearTimeout(timer);
+    };
+  }, [shortname, identifier, pageUrl, title, categoryId, containerId, onLoaded, onError]);
 
   return (
     <div className="disqus-container w-full">
-      {/* Container where Disqus mounts its thread */}
       <div id={containerId} ref={containerRef} className={className} />
-
       <noscript>
         Please enable JavaScript to view the{' '}
         <a
           href={`https://${shortname}.disqus.com/?ref_noscript`}
-          rel="noopener noreferrer"
+          rel="noreferrer"
           target="_blank"
-          className="text-amber-700 underline font-medium"
+          className="text-[#003f8b] underline"
         >
           comments powered by Disqus.
         </a>
