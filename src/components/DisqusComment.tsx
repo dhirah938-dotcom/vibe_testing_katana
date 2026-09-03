@@ -64,8 +64,8 @@ export interface DisqusCommentProps {
  * - Manages script error and timeout fallbacks
  */
 export const DisqusComment: React.FC<DisqusCommentProps> = ({
-  shortname = 'leon-kwang',
-  identifier = 'katana-guild-talk-to-us-thread',
+  shortname = 'katana-sword-smu',
+  identifier = 'katana-sword-smu-talk-to-us',
   url,
   title = 'Talk to Us - Caesars Nihonto Guild',
   categoryId,
