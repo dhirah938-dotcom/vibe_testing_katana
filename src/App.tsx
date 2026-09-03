@@ -18,17 +18,20 @@ import { Sword, CartItem, FilterCategory } from './types';
 
 export default function App() {
   // Navigation & Category state
-  const [currentCategory, setCurrentCategory] = useState<FilterCategory>('katana');
+  const [currentCategory, setCurrentCategory] = useState<FilterCategory>('all');
 
-  // Filter & Search states
+  // Filter & Search states matching reference screenshot
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedBrand, setSelectedBrand] = useState('all');
+  const [selectedBladeShape, setSelectedBladeShape] = useState('all');
+  const [selectedLockingMechanism, setSelectedLockingMechanism] = useState('all');
   const [selectedPriceRange, setSelectedPriceRange] = useState('all');
-  const [selectedCertificate, setSelectedCertificate] = useState('all');
   const [selectedSteel, setSelectedSteel] = useState('all');
+  const [selectedHandleMaterial, setSelectedHandleMaterial] = useState('all');
+  const [selectedCertificate, setSelectedCertificate] = useState('all');
   const [sortBy, setSortBy] = useState('default');
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 12;
+  const [itemsPerPage, setItemsPerPage] = useState(20);
 
   // Modals & Drawers state
   const [selectedSword, setSelectedSword] = useState<Sword | null>(null);
@@ -55,19 +58,38 @@ export default function App() {
       // Brand filter
       if (selectedBrand !== 'all' && sword.brand !== selectedBrand) return false;
 
+      // Blade Shape filter
+      if (selectedBladeShape !== 'all') {
+        const shape = (sword.bladeShape || sword.sori || '').toLowerCase();
+        if (!shape.includes(selectedBladeShape.toLowerCase())) return false;
+      }
+
+      // Locking Mechanism filter
+      if (selectedLockingMechanism !== 'all') {
+        const lock = (sword.lockingMechanism || '').toLowerCase();
+        if (!lock.includes(selectedLockingMechanism.toLowerCase())) return false;
+      }
+
+      // Handle Material filter
+      if (selectedHandleMaterial !== 'all') {
+        const handle = (sword.handleMaterial || sword.tsuka || '').toLowerCase();
+        if (!handle.includes(selectedHandleMaterial.toLowerCase())) return false;
+      }
+
       // Price filter
-      if (selectedPriceRange === 'under-300' && sword.price >= 300) return false;
-      if (selectedPriceRange === '300-600' && (sword.price < 300 || sword.price > 600)) return false;
+      if (selectedPriceRange === 'under-100' && sword.price >= 100) return false;
+      if (selectedPriceRange === '100-350' && (sword.price < 100 || sword.price > 350)) return false;
+      if (selectedPriceRange === '350-600' && (sword.price < 350 || sword.price > 600)) return false;
       if (selectedPriceRange === '600-800' && (sword.price < 600 || sword.price > 800)) return false;
       if (selectedPriceRange === 'over-800' && sword.price <= 800) return false;
-
-      // Certificate filter
-      if (selectedCertificate !== 'all' && sword.certificate !== selectedCertificate) return false;
 
       // Steel filter
       if (selectedSteel !== 'all') {
         if (!sword.steel.toLowerCase().includes(selectedSteel.toLowerCase())) return false;
       }
+
+      // Certificate filter
+      if (selectedCertificate !== 'all' && sword.certificate !== selectedCertificate) return false;
 
       // Search Query
       if (searchQuery.trim()) {
@@ -85,15 +107,19 @@ export default function App() {
     }).sort((a, b) => {
       if (sortBy === 'price-asc') return a.price - b.price;
       if (sortBy === 'price-desc') return b.price - a.price;
-      if (sortBy === 'antique') return a.category === 'antique' ? -1 : 1;
+      if (sortBy === 'name-asc') return a.name.localeCompare(b.name);
+      if (sortBy === 'code-asc') return a.code.localeCompare(b.code);
       return 0; // default order
     });
   }, [
     currentCategory,
     selectedBrand,
+    selectedBladeShape,
+    selectedLockingMechanism,
     selectedPriceRange,
-    selectedCertificate,
     selectedSteel,
+    selectedHandleMaterial,
+    selectedCertificate,
     searchQuery,
     sortBy,
   ]);
@@ -107,16 +133,22 @@ export default function App() {
 
   const hasActiveFilters =
     selectedBrand !== 'all' ||
+    selectedBladeShape !== 'all' ||
+    selectedLockingMechanism !== 'all' ||
     selectedPriceRange !== 'all' ||
-    selectedCertificate !== 'all' ||
     selectedSteel !== 'all' ||
+    selectedHandleMaterial !== 'all' ||
+    selectedCertificate !== 'all' ||
     searchQuery !== '';
 
   const handleResetFilters = () => {
     setSelectedBrand('all');
+    setSelectedBladeShape('all');
+    setSelectedLockingMechanism('all');
     setSelectedPriceRange('all');
-    setSelectedCertificate('all');
     setSelectedSteel('all');
+    setSelectedHandleMaterial('all');
+    setSelectedCertificate('all');
     setSearchQuery('');
     setSortBy('default');
     setCurrentPage(1);
@@ -198,11 +230,21 @@ export default function App() {
           <AuthenticationView onSelectSword={(sword) => setSelectedSword(sword)} />
         ) : (
           <>
-            {/* Catalog Controls (Filters, Sort, Counter) */}
+            {/* Catalog Controls (Filters, Sort, Counter) matching reference image */}
             <CatalogControls
               selectedBrand={selectedBrand}
               onSelectBrand={(b) => {
                 setSelectedBrand(b);
+                setCurrentPage(1);
+              }}
+              selectedBladeShape={selectedBladeShape}
+              onSelectBladeShape={(bs) => {
+                setSelectedBladeShape(bs);
+                setCurrentPage(1);
+              }}
+              selectedLockingMechanism={selectedLockingMechanism}
+              onSelectLockingMechanism={(lm) => {
+                setSelectedLockingMechanism(lm);
                 setCurrentPage(1);
               }}
               selectedPriceRange={selectedPriceRange}
@@ -210,20 +252,26 @@ export default function App() {
                 setSelectedPriceRange(p);
                 setCurrentPage(1);
               }}
-              selectedCertificate={selectedCertificate}
-              onSelectCertificate={(c) => {
-                setSelectedCertificate(c);
-                setCurrentPage(1);
-              }}
               selectedSteel={selectedSteel}
               onSelectSteel={(s) => {
                 setSelectedSteel(s);
                 setCurrentPage(1);
               }}
+              selectedHandleMaterial={selectedHandleMaterial}
+              onSelectHandleMaterial={(hm) => {
+                setSelectedHandleMaterial(hm);
+                setCurrentPage(1);
+              }}
               sortBy={sortBy}
               onSelectSortBy={setSortBy}
+              itemsPerPage={itemsPerPage}
+              onSelectItemsPerPage={(num) => {
+                setItemsPerPage(num);
+                setCurrentPage(1);
+              }}
               currentPage={currentPage}
               totalPages={totalPages}
+              totalItems={filteredSwords.length}
               onNextPage={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
               onPrevPage={() => setCurrentPage((p) => Math.max(1, p - 1))}
               onResetFilters={handleResetFilters}

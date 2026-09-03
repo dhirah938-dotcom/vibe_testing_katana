@@ -16,8 +16,11 @@ export interface Sword {
   status: string;
   statusType: 'stock' | 'loyalty' | 'warning' | 'dispatch';
   imageUrl: string;
-  category: 'katana' | 'wakizashi' | 'iaito' | 'antique' | 'custom' | 'authentication';
+  category: 'katana' | 'wakizashi' | 'iaito' | 'antique' | 'custom' | 'authentication' | 'collectible';
   steel: string;
+  bladeShape?: string;
+  lockingMechanism?: string;
+  handleMaterial?: string;
   nagasa: string;
   sori: string;
   hamon: string;
