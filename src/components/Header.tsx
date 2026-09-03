@@ -85,7 +85,7 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
 
             {/* Primary Navigation */}
-            <nav className="hidden lg:flex items-center space-x-7 text-[13px] tracking-widest font-medium uppercase text-gray-700">
+            <nav className="hidden lg:flex items-center space-x-5 xl:space-x-6 text-xs xl:text-[13px] tracking-widest font-medium uppercase text-gray-700">
               <button
                 onClick={() => onSelectCategory('katana')}
                 className={`py-1 transition-all cursor-pointer ${
@@ -145,6 +145,16 @@ export const Header: React.FC<HeaderProps> = ({
                 }`}
               >
                 Authentication
+              </button>
+              <button
+                onClick={() => onSelectCategory('talk-to-us')}
+                className={`py-1 transition-all cursor-pointer ${
+                  currentCategory === 'talk-to-us'
+                    ? 'text-[#C5A059] border-b-2 border-[#C5A059] font-semibold'
+                    : 'hover:text-[#C5A059]'
+                }`}
+              >
+                Talk to Us
               </button>
             </nav>
 
@@ -217,6 +227,80 @@ export const Header: React.FC<HeaderProps> = ({
               </button>
             </div>
           )}
+
+          {/* Mobile & Tablet Horizontal Category Navigation */}
+          <nav className="lg:hidden flex items-center space-x-4 overflow-x-auto py-2.5 border-t border-gray-100 text-xs tracking-wider uppercase font-medium text-gray-600 no-scrollbar">
+            <button
+              onClick={() => onSelectCategory('katana')}
+              className={`whitespace-nowrap px-1 py-1 transition-colors ${
+                currentCategory === 'katana'
+                  ? 'text-[#C5A059] border-b-2 border-[#C5A059] font-semibold'
+                  : 'hover:text-gray-900'
+              }`}
+            >
+              Katana
+            </button>
+            <button
+              onClick={() => onSelectCategory('wakizashi')}
+              className={`whitespace-nowrap px-1 py-1 transition-colors ${
+                currentCategory === 'wakizashi'
+                  ? 'text-[#C5A059] border-b-2 border-[#C5A059] font-semibold'
+                  : 'hover:text-gray-900'
+              }`}
+            >
+              Wakizashi
+            </button>
+            <button
+              onClick={() => onSelectCategory('iaito')}
+              className={`whitespace-nowrap px-1 py-1 transition-colors ${
+                currentCategory === 'iaito'
+                  ? 'text-[#C5A059] border-b-2 border-[#C5A059] font-semibold'
+                  : 'hover:text-gray-900'
+              }`}
+            >
+              Iaito
+            </button>
+            <button
+              onClick={() => onSelectCategory('antique')}
+              className={`whitespace-nowrap px-1 py-1 transition-colors ${
+                currentCategory === 'antique'
+                  ? 'text-[#C5A059] border-b-2 border-[#C5A059] font-semibold'
+                  : 'hover:text-gray-900'
+              }`}
+            >
+              Antique
+            </button>
+            <button
+              onClick={() => onSelectCategory('custom')}
+              className={`whitespace-nowrap px-1 py-1 transition-colors ${
+                currentCategory === 'custom'
+                  ? 'text-[#C5A059] border-b-2 border-[#C5A059] font-semibold'
+                  : 'hover:text-gray-900'
+              }`}
+            >
+              Custom
+            </button>
+            <button
+              onClick={() => onSelectCategory('authentication')}
+              className={`whitespace-nowrap px-1 py-1 transition-colors ${
+                currentCategory === 'authentication'
+                  ? 'text-[#C5A059] border-b-2 border-[#C5A059] font-semibold'
+                  : 'hover:text-gray-900'
+              }`}
+            >
+              Auth
+            </button>
+            <button
+              onClick={() => onSelectCategory('talk-to-us')}
+              className={`whitespace-nowrap px-1 py-1 transition-colors ${
+                currentCategory === 'talk-to-us'
+                  ? 'text-[#C5A059] border-b-2 border-[#C5A059] font-semibold'
+                  : 'hover:text-gray-900'
+              }`}
+            >
+              Talk to Us
+            </button>
+          </nav>
         </div>
       </header>
     </>

@@ -13,6 +13,7 @@ import { ProvenanceFaqModal } from './components/ProvenanceFaqModal';
 import { CollectorAccountModal } from './components/CollectorAccountModal';
 import { CustomForgingView } from './components/CustomForgingView';
 import { AuthenticationView } from './components/AuthenticationView';
+import { TalkToUsView } from './components/TalkToUsView';
 import { SWORDS_DATABASE } from './data/swords';
 import { Sword, CartItem, FilterCategory } from './types';
 
@@ -228,6 +229,8 @@ export default function App() {
           <CustomForgingView onAddCustomSword={(sword) => handleAddToCart(sword)} />
         ) : currentCategory === 'authentication' ? (
           <AuthenticationView onSelectSword={(sword) => setSelectedSword(sword)} />
+        ) : currentCategory === 'talk-to-us' ? (
+          <TalkToUsView />
         ) : (
           <>
             {/* Catalog Controls (Filters, Sort, Counter) matching reference image */}

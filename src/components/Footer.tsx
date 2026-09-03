@@ -34,6 +34,14 @@ export const Footer: React.FC<FooterProps> = ({
             </h5>
             <ul className="space-y-2 text-[11px]">
               <li>
+                <button
+                  onClick={() => onSelectCategory('talk-to-us')}
+                  className="hover:text-white transition-colors cursor-pointer text-left font-medium text-amber-400/90"
+                >
+                  Talk to Us &amp; Discussion Forum
+                </button>
+              </li>
+              <li>
                 <a
                   href="#reddit-community"
                   onClick={(e) => {

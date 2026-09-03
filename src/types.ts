@@ -43,4 +43,12 @@ export interface CartItem {
   quantity: number;
 }
 
-export type FilterCategory = 'all' | 'katana' | 'wakizashi' | 'iaito' | 'antique' | 'custom' | 'authentication';
+export type FilterCategory =
+  | 'all'
+  | 'katana'
+  | 'wakizashi'
+  | 'iaito'
+  | 'antique'
+  | 'custom'
+  | 'authentication'
+  | 'talk-to-us';

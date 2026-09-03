@@ -96,6 +96,16 @@ const CATEGORY_INFO: Record<
     ),
     breadcrumb: 'Authentication',
   },
+  'talk-to-us': {
+    title: 'Talk to Us',
+    subtitle: (
+      <>
+        Connect directly with our master swordsmiths, certified polishers (togishi), and international
+        collectors. Inquiries, feedback, and swordsmanship discussions welcome.
+      </>
+    ),
+    breadcrumb: 'Talk to Us',
+  },
 };
 
 export const HeroEtymology: React.FC<HeroEtymologyProps> = ({
