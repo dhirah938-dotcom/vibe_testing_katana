@@ -1,0 +1,6 @@
+{
+  "name": "Caesars Nihonto Guild - Authentic Katana Collection",
+  "description": "Direct Nihonto Craftsmen Guild Certified Katana, Wakizashi, Antique Heirlooms and Samurai Swords sourced from Japanese master artisans.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
