@@ -103,48 +103,48 @@ export const HeroEtymology: React.FC<HeroEtymologyProps> = ({
 
   return (
     <section
-      className="pt-10 pb-8 text-center bg-gradient-to-b from-[#FAF9F6] to-white border-b border-gray-200"
+      className="pt-10 pb-4 text-center bg-white"
       data-purpose="category-intro"
     >
       <div className="max-w-4xl mx-auto px-4">
-        <h1 className="font-cinzel text-4xl sm:text-5xl font-normal text-[#1A1D20] tracking-wide mb-3 uppercase">
+        <h1 className="text-3xl sm:text-4xl font-normal text-gray-800 tracking-tight mb-2">
           {info.title}
         </h1>
 
         {/* Linguistic & Historic Etymology definition from catalog reference */}
-        <p className="text-xs sm:text-sm text-gray-600 leading-relaxed max-w-2xl mx-auto mb-5 font-light">
+        <p className="text-[11px] sm:text-xs text-gray-500 leading-relaxed max-w-2xl mx-auto mb-4 font-normal">
           {info.subtitle}
         </p>
 
         {/* Breadcrumbs navigation */}
         <nav
           aria-label="Breadcrumb"
-          className="text-xs tracking-wider uppercase text-gray-400 font-medium"
+          className="text-xs text-gray-500 font-normal"
         >
-          <ol className="inline-flex items-center space-x-2">
+          <ol className="inline-flex items-center justify-center space-x-1.5 text-xs text-gray-500">
             <li>
               <button
                 onClick={() => onSelectCategory('katana')}
-                className="hover:text-[#C5A059] transition-colors cursor-pointer"
+                className="hover:text-gray-900 transition-colors cursor-pointer"
               >
                 Home
               </button>
             </li>
-            <li className="text-gray-300">/</li>
+            <li className="text-gray-400">/</li>
             <li>
               <button
                 onClick={() => onSelectCategory('katana')}
-                className="hover:text-[#C5A059] transition-colors cursor-pointer"
+                className="hover:text-gray-900 transition-colors cursor-pointer"
               >
                 Shop Now
               </button>
             </li>
-            <li className="text-gray-300">/</li>
+            <li className="text-gray-400">/</li>
             <li>
-              <span className="text-gray-400">Japanese</span>
+              <span className="text-gray-500">Japanese</span>
             </li>
-            <li className="text-gray-300">/</li>
-            <li aria-current="page" className="text-slate-800 font-semibold">
+            <li className="text-gray-400">/</li>
+            <li aria-current="page" className="text-gray-900 font-bold">
               {info.breadcrumb}
             </li>
           </ol>
