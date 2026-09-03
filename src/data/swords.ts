@@ -12,6 +12,16 @@ import ca101Img from '../assets/images/ca101_kiyo_sword_1788423294215.jpg';
 import ca105Img from '../assets/images/ca105_aki_sword_1788423310172.jpg';
 import ca103Img from '../assets/images/ca103_fudo_sword_1788423324225.jpg';
 import ca102Img from '../assets/images/ca102_seiryu_sword_1788423340929.jpg';
+import zatoichiImg from '../assets/images/zatoichi_sword_1788434797289.jpg';
+import brideImg from '../assets/images/bride_sword_1788434815937.jpg';
+import kujakuImg from '../assets/images/kujaku_sword_1788434833102.jpg';
+import algrenImg from '../assets/images/algren_sword_1788434850771.jpg';
+import shinenImg from '../assets/images/shinen_sword_1788435008539.jpg';
+import tsuchikazeImg from '../assets/images/tsuchikaze_sword_1788434869673.jpg';
+import hasuikaImg from '../assets/images/hasuika_sword_1788434898062.jpg';
+import kashiraWakizashiImg from '../assets/images/kashira_wakizashi_1788434924129.jpg';
+import sekiIaitoImg from '../assets/images/seki_iaito_1788434941250.jpg';
+import muramasaTantoImg from '../assets/images/muramasa_tanto_1788434956376.jpg';
 
 export const SWORDS_DATABASE: Sword[] = [
   // Exact 16 Katana blades in order as shown in reference catalog
@@ -29,8 +39,7 @@ export const SWORDS_DATABASE: Sword[] = [
     },
     status: 'In Stock • Ships DHL',
     statusType: 'stock',
-    imageUrl:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuAqXYrAzbdXX1o73HtaROr85-WrFR-eMAmOUHHKCgRWQVlN9AKkA2iOb2iAANe14cHyTTGMBFb3nOGZj3jtRTktaQOrtPa3pOIggV7J1XhjUQqEIIq0CC7kOTkuEMbMO9z0smFW5QgsiJB0MGoVRjH7snULzXfdqX1c1Lkfdjbk4WapTHiQwqSbZBNiXthZtSg9xpRa5YRKrMgDE9VjVLql3bS1wPc4yf6mG5GxdgUaNB1cBeEfQcWlTwFtq-vmEAbQblo',
+    imageUrl: zatoichiImg,
     category: 'katana',
     steel: '1095 Clay-Tempered High Carbon',
     nagasa: '71 cm (2.34 shaku)',
@@ -133,8 +142,7 @@ export const SWORDS_DATABASE: Sword[] = [
     },
     status: 'Includes Silk Bag',
     statusType: 'dispatch',
-    imageUrl:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuDAvnTPI7oT-10YFjXFof_QAZcjv1hlSEzSHG2l9D92b2W3YGximbDDHShiP_fYhLEVer41qdJj-Gp5cWFg4D8YmD6q1teWcX3OYvaM2Sm5Vnlqf4-pEEvgxQxniao-rRM0sbOdd4JPjyn8vox3w2eUQAUmmIb-5l8jCNzznAemzeyloLmCVtioc2rXHzK278mAZw8SIpLwLnxw1HIchEr2iO4MiTqhmKlzy6pxBtNVZdO6DeSX1_8aiDEpO5iWKrlJgo8',
+    imageUrl: brideImg,
     category: 'katana',
     steel: 'Hand-Forged 1095 High Carbon Steel',
     nagasa: '73.5 cm (2.42 shaku)',
@@ -267,8 +275,7 @@ export const SWORDS_DATABASE: Sword[] = [
     },
     status: 'Only 1 in vault',
     statusType: 'warning',
-    imageUrl:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuBwNPiLD8uAiY9dg3UdZ_U9CrFYGweDrloQ6TDUwbB1m0nKmpnlOsLXyTzfB0Ua1RslbMM2kQlycS3XPGavIoep4cn06tvukVwUq4ExNLxCeZ6RTHTDQ6eDlThSBsc3neLu4Z4i5lEB_r3W7y8CJjwsRukSaj7fpzUrCIbfMUAHLdFX7dp1CWJuJ1laZc5aQkRFDNRhOGV7DwnsiEfBGwV8RjtK0UPxRDqPWgNq0cJkLZuu-C3ciVC3YQvKj5Z2suMAy_I',
+    imageUrl: kujakuImg,
     category: 'katana',
     steel: 'Folded T10 Clay-Tempered (1,024 layers)',
     nagasa: '73 cm (2.41 shaku)',
@@ -302,8 +309,7 @@ export const SWORDS_DATABASE: Sword[] = [
     },
     status: 'In Stock',
     statusType: 'stock',
-    imageUrl:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuAGLqIk5c7QZI_thSqXTkzEoeSTjcx7ffS2oliDzJmnGINJ_doMpaP844RCd4Zg7UGdcug9tXuKrPddQaktOK4rkvXLy2OtGFmLnXSKPZScmHALAQUqYdBFalJtwGJakL-3MvUnqdNFCDAEseZ0Uq3pGJoRWDVVFg5V-5pBVK2QCSnWSNDDIPRAsFWwNOY1VlJ8opX44iaeEt_hyuOIKTcFW-q-oPaSrpfZotTaSKyTKcOE52uaIYSb5LAkHBM1vYBcW7Y',
+    imageUrl: algrenImg,
     category: 'katana',
     steel: 'Differentially Tempered 1095 Forged Carbon',
     nagasa: '74 cm (2.44 shaku)',
@@ -337,8 +343,7 @@ export const SWORDS_DATABASE: Sword[] = [
     },
     status: 'NBTHK Eligible',
     statusType: 'loyalty',
-    imageUrl:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuDSEPKmDxP4dVUej467KfnvMQFvlzzQTs7ByAZlUqseVQqNUu1BefOkmJvpgrgssR1YrCES9N8T2vSuC559LB9kpza2WyWae3F9skusXt8E2dg-AJVMYp0-2hnxE_P_kC5moDqiTddcNL3uNTuvK48oeHjv3tkIDLI06pNLmg2VtmxJ7exsWFP4j_0SrygoQQkNY58JgQLf0jv5CpJYiE2g1ygr0cyUT_ZZdSSUkyoaSJVZnXut1uiu_RQiu_gC3ZocyaA',
+    imageUrl: shinenImg,
     category: 'katana',
     steel: 'Traditional Japanese Tatara Tamahagane',
     nagasa: '70.8 cm (2.33 shaku)',
@@ -367,8 +372,7 @@ export const SWORDS_DATABASE: Sword[] = [
     price: 643.0,
     status: 'Ready to Dispatch',
     statusType: 'dispatch',
-    imageUrl:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuD8Ki_HxBUG1xjDVwhL0D1GtXpb-FB8r7p3M2Nzmu5lOXa_PZPlMN0tD-PpYXcIph6nvMkB-kOBGnlVBa2Q99F82S5LIoXZxtTtiD2sIiDDSHTGg1qjv2960W_88RPNeXEcAbfRNrAsH4DvO7Xwk21jfm7y6tpflL6fpe_RBGYi6gIJhH54X6yTZgP0u3cUveI5NtojtnQ-Axk8W9BORHjmRXXehdMrCsfOikx97Vn6HpnNlBoK_PWdInji-dTsj0A6XR0',
+    imageUrl: tsuchikazeImg,
     category: 'katana',
     steel: 'Clay-Tempered T10 High Speed Tool Steel',
     nagasa: '72 cm (2.37 shaku)',
@@ -402,8 +406,7 @@ export const SWORDS_DATABASE: Sword[] = [
     },
     status: 'Certified Nihonto',
     statusType: 'loyalty',
-    imageUrl:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuA4-MTftcj0-yakk4O88_kydabFYQk05FyxuGpMeB8ztq1ng3WWtG0LXVWHU6ayWxSW_-YIaMt_Pt0diZVRUHGIMEwj8Su-nSCDOqXhF_PQZxmXCZBMAXJ_vHVy8Y849Xt2z5gqHjGe7LOs-hI4jlvSs9cVVd28mKBWbqyVlXCSkdw9e4iX9ATgMPxKz7LQ4Vy0Y5zxfB2HWT2tpF9X1bO76sQt4I532V31-ERjuxsKKTcaB8tjQroDly8vmfiQ1qr8dSE',
+    imageUrl: hasuikaImg,
     category: 'katana',
     steel: 'Tamahagane Grade Folded T10 Steel (4,096 folds)',
     nagasa: '74.5 cm (2.46 shaku)',
@@ -689,8 +692,7 @@ export const SWORDS_DATABASE: Sword[] = [
     },
     status: 'In Stock • Ships DHL',
     statusType: 'stock',
-    imageUrl:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuCDNZF6v7OqaIlPm_jzBmWy0kwmTY3S9w9-u-5JihbIfZEIgDT7YIedkhSA5mBYnwoucRSoJG6voKisuXkTIQqBg4MPlw-TPaS3j1DRnD_LVHt-bfv8OIIRGciuGr6iFDrBaalGdnrkjVryQbfsFJl1oti8FngaKMvMLKZ4v0mOEQ8rI9hij55ihf7ngXJgEutF32_mDsHgiotIpf3WkzY-0W1zRBv1WtkGfKVsM0jsFpV6kSOpbT121hHNPa74G4gCyOE',
+    imageUrl: kashiraWakizashiImg,
     category: 'wakizashi',
     steel: '1095 Clay Tempered Steel',
     nagasa: '51 cm (1.68 shaku)',
@@ -725,8 +727,7 @@ export const SWORDS_DATABASE: Sword[] = [
     },
     status: 'Available to Ship',
     statusType: 'stock',
-    imageUrl:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuDiV4pWHtcNzKnxQV3Ns0VVevn-Tf59XsmB_NEiX_vSpgzU8x8dMtswkYj0Bk2ev7iHsWNxUpj_F5phmtlwGZWWTHMsKUlhZen1a2ib43bMFDz6oaNhMpt_EI-PH0ChHc1F4DFZqXMkkXrPPIGwg_5tp1RHrD0BW6BEv3NraZ89Wpvn_u6WFtFmiqpUTu-CC31Zp32k1HZZWyoD2aclWs6HCd5UaavVRsQHwR1SBceuhvBiWOmMz1fwpexCi_y1n7-aLPg',
+    imageUrl: sekiIaitoImg,
     category: 'iaito',
     steel: 'Special Zinc-Bismuth-Aluminum Alloy (Unsharpened)',
     nagasa: '74 cm (2.45 shaku)',
@@ -760,8 +761,7 @@ export const SWORDS_DATABASE: Sword[] = [
     },
     status: 'In Stock • Ships DHL',
     statusType: 'stock',
-    imageUrl:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuAqXYrAzbdXX1o73HtaROr85-WrFR-eMAmOUHHKCgRWQVlN9AKkA2iOb2iAANe14cHyTTGMBFb3nOGZj3jtRTktaQOrtPa3pOIggV7J1XhjUQqEIIq0CC7kOTkuEMbMO9z0smFW5QgsiJB0MGoVRjH7snULzXfdqX1c1Lkfdjbk4WapTHiQwqSbZBNiXthZtSg9xpRa5YRKrMgDE9VjVLql3bS1wPc4yf6mG5GxdgUaNB1cBeEfQcWlTwFtq-vmEAbQblo',
+    imageUrl: muramasaTantoImg,
     category: 'wakizashi',
     steel: '1095 Clay-Tempered Carbon',
     nagasa: '28 cm (0.92 shaku)',

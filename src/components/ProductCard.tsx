@@ -4,37 +4,27 @@ import { Sword } from '../types';
 interface ProductCardProps {
   sword: Sword;
   onSelect: (sword: Sword) => void;
-  onAddToCart: (sword: Sword, e: React.MouseEvent) => void;
+  onAddToCart?: (sword: Sword, e: React.MouseEvent) => void;
 }
 
-export const ProductCard: React.FC<ProductCardProps> = ({ sword, onSelect, onAddToCart }) => {
+export const ProductCard: React.FC<ProductCardProps> = ({ sword, onSelect }) => {
   return (
     <article
       onClick={() => onSelect(sword)}
       className="bg-white border border-gray-200 flex flex-col group cursor-pointer transition-all duration-200 hover:border-gray-300"
     >
-      {/* Square Image Box matching reference gallery */}
+      {/* Single primary main image */}
       <div className="aspect-square w-full bg-[#f6f6f6] overflow-hidden relative border-b border-gray-200 flex items-center justify-center">
         <img
           alt={`${sword.code} ${sword.name}`}
           className="w-full h-full object-cover object-center group-hover:scale-[1.02] transition-transform duration-300"
           src={sword.imageUrl}
+          referrerPolicy="no-referrer"
           loading="lazy"
         />
-
-        {/* Subtle quick add on hover for enhanced utility */}
-        <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-          <button
-            onClick={(e) => onAddToCart(sword, e)}
-            className="px-2.5 py-1 bg-white/95 hover:bg-white text-xs text-gray-800 font-medium rounded-sm border border-gray-200 shadow-sm transition-colors"
-            title="Add to order"
-          >
-            + Add
-          </button>
-        </div>
       </div>
 
-      {/* Product Details Box matching reference image */}
+      {/* Product Details Box */}
       <div className="p-4 sm:p-5 flex flex-col justify-between flex-1 bg-white">
         <div>
           {/* Product Code */}

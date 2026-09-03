@@ -44,6 +44,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
               <img
                 src={sword.imageUrl}
                 alt={sword.name}
+                referrerPolicy="no-referrer"
                 className="w-full h-full object-contain filter contrast-105"
               />
               {sword.badge && (
