@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import {
   MessageSquare,
   ShieldCheck,
@@ -11,22 +11,10 @@ import {
   Info,
   CheckCircle2,
 } from 'lucide-react';
-
-declare global {
-  interface Window {
-    DISQUS?: {
-      reset: (options: {
-        reload: boolean;
-        config: (this: any) => void;
-      }) => void;
-    };
-    disqus_config?: (this: any) => void;
-    disqus_shortname?: string;
-  }
-}
+import { DisqusComment } from './DisqusComment';
 
 export const TalkToUsView: React.FC = () => {
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
   const [isReloading, setIsReloading] = useState(false);
   const [hasAdblockWarning, setHasAdblockWarning] = useState(false);
   const checkMountTimerRef = useRef<number | null>(null);
@@ -43,99 +31,10 @@ export const TalkToUsView: React.FC = () => {
         // fallback
       }
     }
-    return 'https://katana-sword-smu.disqus.com';
+    return 'https://katana-sword-smu.disqus.com/talk-to-us';
   }, []);
 
-  const configureDisqus = useCallback(
-    function (this: any) {
-      const target = this && typeof this === 'object' ? this : {};
-      if (!target.page) {
-        target.page = {};
-      }
-      target.page.url = getPageUrl();
-      target.page.identifier = 'talk-to-us';
-      target.page.title = 'Talk to Us & Guild Discussion - Caesars Nihonto Guild';
-    },
-    [getPageUrl]
-  );
-
-  const initOrReloadDisqus = useCallback(() => {
-    setIsReloading(true);
-    window.disqus_shortname = 'katana-sword-smu';
-    window.disqus_config = configureDisqus;
-
-    if (window.DISQUS && typeof window.DISQUS.reset === 'function') {
-      try {
-        window.DISQUS.reset({
-          reload: true,
-          config: configureDisqus,
-        });
-        setIsLoaded(true);
-        setIsReloading(false);
-      } catch (err) {
-        console.warn('Disqus reset notice:', err);
-        setIsReloading(false);
-      }
-    } else {
-      // Check if script is already present in DOM
-      let script = document.getElementById('dsq-embed-scr') as HTMLScriptElement | null;
-      if (!script) {
-        script = document.createElement('script');
-        script.id = 'dsq-embed-scr';
-        script.src = 'https://katana-sword-smu.disqus.com/embed.js';
-        script.setAttribute('data-timestamp', String(+new Date()));
-        script.async = true;
-        script.onload = () => {
-          setIsLoaded(true);
-          setIsReloading(false);
-        };
-        script.onerror = () => {
-          setIsLoaded(true);
-          setIsReloading(false);
-        };
-        (document.head || document.body).appendChild(script);
-      } else {
-        // Script exists but DISQUS object is still initializing; poll briefly
-        let attempts = 0;
-        const pollInterval = window.setInterval(() => {
-          attempts++;
-          if (window.DISQUS && typeof window.DISQUS.reset === 'function') {
-            window.clearInterval(pollInterval);
-            try {
-              window.DISQUS.reset({
-                reload: true,
-                config: configureDisqus,
-              });
-            } catch (e) {
-              console.warn('Disqus polling reset notice:', e);
-            }
-            setIsLoaded(true);
-            setIsReloading(false);
-          } else if (attempts > 30) {
-            window.clearInterval(pollInterval);
-            setIsLoaded(true);
-            setIsReloading(false);
-          }
-        }, 100);
-      }
-    }
-
-    // Ensure count widget script is present
-    if (!document.getElementById('dsq-count-scr')) {
-      const countScript = document.createElement('script');
-      countScript.id = 'dsq-count-scr';
-      countScript.src = '//katana-sword-smu.disqus.com/count.js';
-      countScript.async = true;
-      (document.head || document.body).appendChild(countScript);
-    }
-  }, [configureDisqus]);
-
   useEffect(() => {
-    // Initial mount with tiny timeout to ensure #disqus_thread is fully committed to the DOM
-    const initialTimer = window.setTimeout(() => {
-      initOrReloadDisqus();
-    }, 60);
-
     // Watchdog check: If after 5 seconds the thread has no iframe, warn about adblockers
     checkMountTimerRef.current = window.setTimeout(() => {
       const container = document.getElementById('disqus_thread');
@@ -145,12 +44,19 @@ export const TalkToUsView: React.FC = () => {
     }, 5500);
 
     return () => {
-      window.clearTimeout(initialTimer);
       if (checkMountTimerRef.current) {
         window.clearTimeout(checkMountTimerRef.current);
       }
     };
-  }, [initOrReloadDisqus]);
+  }, [reloadKey]);
+
+  const handleManualReload = () => {
+    setIsReloading(true);
+    setReloadKey((prev) => prev + 1);
+    setTimeout(() => {
+      setIsReloading(false);
+    }, 600);
+  };
 
   const handleOpenInNewTab = () => {
     if (typeof window !== 'undefined') {
@@ -235,7 +141,7 @@ export const TalkToUsView: React.FC = () => {
 
           <div className="flex items-center gap-2">
             <button
-              onClick={initOrReloadDisqus}
+              onClick={handleManualReload}
               disabled={isReloading}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded transition-colors cursor-pointer disabled:opacity-50"
               title="Reload discussion thread"
@@ -289,20 +195,15 @@ export const TalkToUsView: React.FC = () => {
           </div>
         )}
 
-        {/* The Disqus Thread Mount */}
-        <div id="disqus_thread" className="min-h-[380px] w-full" />
-
-        <noscript>
-          Please enable JavaScript to view the{' '}
-          <a
-            href="https://disqus.com/?ref_noscript"
-            rel="noopener noreferrer"
-            target="_blank"
-            className="text-amber-700 underline"
-          >
-            comments powered by Disqus.
-          </a>
-        </noscript>
+        {/* Robust DisqusComment Component */}
+        <DisqusComment
+          key={reloadKey}
+          shortname="katana-sword-smu"
+          identifier="talk-to-us"
+          url={getPageUrl()}
+          title="Talk to Us & Guild Discussion - Caesars Nihonto Guild"
+          className="min-h-[380px] w-full"
+        />
 
         {/* Direct Concierge Contact Footer */}
         <div className="mt-8 pt-6 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-500">
